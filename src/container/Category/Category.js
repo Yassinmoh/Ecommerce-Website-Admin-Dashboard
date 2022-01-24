@@ -31,21 +31,10 @@ const Category = () => {
     const handleClose = () => {
 
         const form = new FormData()
-        // const cat ={
-        //     categoryName,
-        //     parentCategoryId,
-        //     categoryImage
-        // }
-
         form.append('name',categoryName)
         form.append('parentId',parentCategoryId)
         form.append('categoryImage',categoryImage)
         dispatch(addCategory(form))
-
-
-
-        // console.log('cat',cat)
-
         setShow(false);
     }
     const handleShow = () => setShow(true);
