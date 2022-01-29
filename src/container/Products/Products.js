@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { addProduct } from '../../actions/product.actions'
 import NewModal from '../../components/UI/Modal/Modal';
 import './products.css'
-
+import {generatePublicUrl} from '../../urlConfig'
 const Products = () => {
 
     const [name, setName] = useState("");
@@ -78,11 +78,13 @@ const Products = () => {
                     product.products.length > 0 ?
                         product.products.map(product =>
                             <tr key={Math.random()} onClick={() => showProductDetailsModal(product)}>
+                                
                                 <td>1</td>
                                 <td>{product.name}</td>
                                 <td>{product.price}</td>
                                 <td>{product.quantity}</td>
-                                <td>--</td>
+                                <td>{product.category.name}</td>
+                                
                             </tr>
                         ) : null
                 }
@@ -98,25 +100,25 @@ const Products = () => {
                 handleClose={handleClose}
             >
                 <Input
-                    lable='Name'
+                    label='Name'
                     value={name}
                     placeholder={'Product Name'}
                     onChange={(e) => setName(e.target.value)}
                 />
                 <Input
-                    lable='Quantity'
+                    label='Quantity'
                     value={quantity}
                     placeholder={'Quantity'}
                     onChange={(e) => setQuantity(e.target.value)}
                 />
                 <Input
-                    lable='Price'
+                    label='Price'
                     value={price}
                     placeholder={'Price'}
                     onChange={(e) => setPrice(e.target.value)}
                 />
                 <Input
-                    lable='Description'
+                    label='Description'
                     value={description}
                     placeholder={'Description'}
                     onChange={(e) => setDescription(e.target.value)}
@@ -182,7 +184,7 @@ const Products = () => {
                     </Col>
                     <Col md='6'>
                         <label className='key'>Category</label>
-                        <p className='value'>--</p>
+                        <p className='value'>{productDetails.category.name}</p>
                     </Col>
                 </Row>
                 <Row>
@@ -197,7 +199,7 @@ const Products = () => {
                         <div style={{display: 'flex'}}>
                         {productDetails.productPictures.map(picture =>
                             <div className='productImgContainer' key={Math.random()}>
-                                <img src={`http://localhost:2000/public/${picture.img}`}/>
+                                <img src={generatePublicUrl(picture.img)}/>
                             </div>
                         )}
                         </div>
