@@ -49,3 +49,24 @@ export const addCategory = (form) => {
         console.log("res", res)
     }
 }
+
+
+
+export const updateCategories = (form) => {
+    const token = window.localStorage.getItem('token')
+
+    return async dispatch => {
+        const res = await axios.post('http://localhost:2000/api/category/update', form, {
+            headers: {
+                'Authorization': token ? `Bearer ${token}` : ''
+            }
+        })
+        if (res.status === 200) {
+            return true;
+            console.log(res)
+        } else {
+            console.log(res)
+        }
+        console.log("res", res)
+    }
+}
