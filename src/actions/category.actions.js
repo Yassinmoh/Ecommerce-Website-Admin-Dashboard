@@ -70,3 +70,23 @@ export const updateCategories = (form) => {
         console.log("res", res)
     }
 }
+
+
+export const deleteCategories = (ids) => {
+    const token = window.localStorage.getItem('token')
+
+    return async dispatch => {
+        const res = await axios.post('http://localhost:2000/api/category/delete', {
+            payload: { ids }
+        }, {
+            headers: {
+                'Authorization': token ? `Bearer ${token}` : ''
+            }
+        })
+        if (res.status == 200) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
