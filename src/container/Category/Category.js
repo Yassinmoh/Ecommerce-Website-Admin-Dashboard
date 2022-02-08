@@ -3,7 +3,7 @@ import { Container, Row, Col, Modal, Button } from 'react-bootstrap';
 import Layout from '../../components/Layout/Layout'
 import { useDispatch, useSelector } from 'react-redux'
 import Input from '../../components/UI/Input/Input'
-import { addCategory, updateCategories, getAllCategory , deleteCategories as deleteCategoriesAction } from '../../actions/category.actions'
+import { addCategory, updateCategories, getAllCategory, deleteCategories as deleteCategoriesAction } from '../../actions/category.actions'
 import NewModal from '../../components/UI/Modal/Modal';
 import CheckboxTree from 'react-checkbox-tree';
 import 'react-checkbox-tree/lib/react-checkbox-tree.css';
@@ -13,7 +13,8 @@ import {
     IoIosArrowForward,
     IoIosArrowDown
 } from "react-icons/io";
-
+import UpdateCategoriesModal from './components/UpdateCategoriesModal'
+import AddCategoryModal from './components/AddCategoryModal'
 
 
 
@@ -91,12 +92,12 @@ const Category = () => {
     const updateCategory = () => {
         updateCheckedAndExpandedCategories()
         setUpdateCategoryModal(true)
-        
+
     }
 
 
 
-    const updateCheckedAndExpandedCategories=()=>{
+    const updateCheckedAndExpandedCategories = () => {
         const categories = createCategoryList(category.categories)
         const checkedArray = []
         const expandedArray = []
@@ -153,168 +154,59 @@ const Category = () => {
         setUpdateCategoryModal(false)
     }
 
-    const renderUpdateCategoriesModal = () => {
-        return (
 
-            <NewModal
 
-                show={updateCategoryModal}
-                handleClose={updateCategoriesForm}
-                modalTitle={'Update Categories'}
-                size="lg"
-            >
-                <Row>
-                    <Col>
-                        <h6>Expanded</h6>
-                    </Col>
-                </Row>
-                {
-                    expandedArray.length > 0 &&
-                    expandedArray.map((item, index) =>
-                        <Row key={index}>
-                            <Col>
-                                <Input
-                                    value={item.name}
-                                    placeholder={'Category Name'}
-                                    onChange={(e) => handelCategoryInput('name', e.target.value, index, 'expanded')}
-                                />
-                            </Col>
-                            <Col>
-                                <select className="form-control"
-                                    onChange={(e) => handelCategoryInput('parentId', e.target.value, index, 'expanded')}
-                                    value={item.parentId}>
-                                    <option>Select Category</option>
-                                    {
-                                        createCategoryList(category.categories).map(option =>
-                                            <option key={option.value} value={option.value}>{option.name}</option>)
-                                    }
-                                </select>
-                            </Col>
-                            <Col>
-                                <select className="form-control">
-                                    <option value="">Select Type</option>
-                                    <option value="store">Store</option>
-                                    <option value="product">Product</option>
-                                    <option value="page">Page</option>
-                                </select>
-                            </Col>
-                        </Row>
-                    )
-                }
 
-                <h6>Checked Categories</h6>
-
-                {
-                    checkedArray.length > 0 &&
-                    checkedArray.map((item, index) =>
-                        <Row key={index}>
-                            <Col>
-                                <Input
-                                    value={item.name}
-                                    placeholder={'Category Name'}
-                                    onChange={(e) => handelCategoryInput('name', e.target.value, index, 'checked')}
-                                />
-                            </Col>
-                            <Col>
-                                <select className="form-control"
-                                    onChange={(e) => handelCategoryInput('parentId', e.target.value, index, 'checked')}
-                                    value={item.parentId}>
-                                    <option>Select Category</option>
-                                    {
-                                        createCategoryList(category.categories).map(option =>
-                                            <option key={option.value} value={option.value}>{option.name}</option>)
-                                    }
-                                </select>
-                            </Col>
-                            <Col>
-                                <select className="form-control">
-                                    <option value="">Select Type</option>
-                                    <option value="store">Store</option>
-                                    <option value="product">Product</option>
-                                    <option value="page">Page</option>
-                                </select>
-                            </Col>
-                        </Row>
-                    )
-                }
-                {/* <input type='file' name='categoryImage' onChange={handelCategoryImage} /> */}
-            </NewModal>
-        );
-    }
-
-    const renderAddCategoryModal = () => {
-        return (
-            <NewModal
-                show={show}
-                handleClose={handleClose}
-                modalTitle={'Add New Category'}
-            >
-                <Input
-                    value={categoryName}
-                    placeholder={'Category Name'}
-                    onChange={(e) => setCategoryName(e.target.value)}
-                />
-
-                <select className="form-control" onChange={(e) => setParentCategoryId(e.target.value)} value={parentCategoryId}>
-                    <option>Select Category</option>
-                    {
-                        createCategoryList(category.categories).map(option =>
-                            <option key={option.value} value={option.value}>{option.name}</option>)
-                    }
-                </select>
-                <input type='file' name='categoryImage' onChange={handelCategoryImage} />
-            </NewModal>
-        );
-    }
-
-    const deleteCategory=()=>{
+    const deleteCategory = () => {
         updateCheckedAndExpandedCategories()
         setDeleteCategoryModal(true);
     }
 
-    const deleteCategories =()=>{
-        const checkedIdsArray= checkedArray.map((item, index)=>({_id:item.value}) )
-        const expandedIdsArray= expandedArray.map((item, index)=>({_id:item.value}) )
-        const idsArray=expandedIdsArray.concat(checkedIdsArray)
-        dispatch(deleteCategoriesAction(idsArray))
-        .then(result=>{
-            if(result){
-                dispatch(getAllCategory())
-                setDeleteCategoryModal(false)
-            }
-        })
+    const deleteCategories = () => {
+        const checkedIdsArray = checkedArray.map((item, index) => ({ _id: item.value }))
+        const expandedIdsArray = expandedArray.map((item, index) => ({ _id: item.value }))
+        const idsArray = expandedIdsArray.concat(checkedIdsArray)
+        if (checkedIdsArray.length > 0) {
+            dispatch(deleteCategoriesAction(checkedIdsArray))
+                .then(result => {
+                    if (result) {
+                        dispatch(getAllCategory())
+                        setDeleteCategoryModal(false)
+                    }
+                })
+        }
     }
 
-    const renderDeleteCategoryModal=()=>{
+    const renderDeleteCategoryModal = () => {
         return (
             <NewModal
-            modalTitle="Confirm"
-            show={deleteCategoryModal}
-            handleClose={()=>setDeleteCategoryModal(false)}
-            buttons={[
-                {
-                    label:'No',
-                    color: 'primary',
-                    onClick:()=>{
-                        alert('no')
+                modalTitle="Confirm"
+                show={deleteCategoryModal}
+                handleClose={() => setDeleteCategoryModal(false)}
+                buttons={[
+                    {
+                        label: 'No',
+                        color: 'primary',
+                        onClick: () => {
+                            alert('no')
+                        }
+                    },
+                    {
+                        label: 'Yes',
+                        color: 'danger',
+                        onClick: deleteCategories
                     }
-                },
-                {
-                    label:'Yes',
-                    color: 'danger',
-                    onClick:deleteCategories
-                }
-            ]}
+                ]}
             >
-                    <h5>Expanded</h5>
-                {expandedArray.map((item,index)=> <span key={index}>{item.name}</span> )}
-                    <h5>Checked</h5>
-                {checkedArray.map((item,index)=> <span key={index}>{item.name}</span> )}
+                <h5>Expanded</h5>
+                {expandedArray.map((item, index) => <span key={index}>{item.name}</span>)}
+                <h5>Checked</h5>
+                {checkedArray.map((item, index) => <span key={index}>{item.name}</span>)}
 
             </NewModal>
         )
     }
-
+    const categoryList= createCategoryList(category.categories)
     return (
         <>
             <Layout sidebar>
@@ -357,8 +249,28 @@ const Category = () => {
                     </Row>
 
                 </Container>
-                {renderAddCategoryModal()}
-                {renderUpdateCategoriesModal()}
+                <AddCategoryModal
+                show={updateCategoryModal}
+                handleClose={updateCategoriesForm}
+                modalTitle={'Add New Category'}
+                categoryName={categoryName}
+                setCategoryName={setCategoryName}
+                parentCategoryId={parentCategoryId}
+                setParentCategoryId={setParentCategoryId}
+                categoryList={categoryList}
+                />
+                <UpdateCategoriesModal
+                    show={updateCategoryModal}
+                    handleClose={updateCategoriesForm}
+                    modalTitle={'Update Categories'}
+                    size="lg"
+                    expandedArray={expandedArray}
+                    checkedArray={checkedArray}
+                    handelCategoryInput={handelCategoryInput}
+                    categoryList={categoryList}
+                />
+                
+                {/* {renderAddCategoryModal()} */}
                 {renderDeleteCategoryModal()}
             </Layout>
         </>
