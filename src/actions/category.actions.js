@@ -30,23 +30,27 @@ export const addCategory = (form) => {
 
     return async dispatch => {
         dispatch({ type: categoryConstants.ADD_NEW_CATEGORY_REQUEST })
-        const res = await axios.post('http://localhost:2000/api/category/create', form, {
-            headers: {
-                'Authorization': token ? `Bearer ${token}` : ''
+        try {
+            const res = await axios.post('http://localhost:2000/api/category/create', form, {
+                headers: {
+                    'Authorization': token ? `Bearer ${token}` : ''
+                }
+            })
+            if (res.status === 200) {
+                dispatch({
+                    type: categoryConstants.ADD_NEW_CATEGORY_SUCCESS,
+                    payload: { category: res.data.category }
+                })
+            } else {
+                dispatch({
+                    type: categoryConstants.ADD_NEW_CATEGORY_FAILURE,
+                    payload: res.data.error
+                })
             }
-        })
-        if (res.status === 200) {
-            dispatch({
-                type: categoryConstants.ADD_NEW_CATEGORY_SUCCESS,
-                payload: { category: res.data.category }
-            })
-        } else {
-            dispatch({
-                type: categoryConstants.ADD_NEW_CATEGORY_FAILURE,
-                payload: res.data.error
-            })
+        } catch (error) {
+            // console.log(error.response)
         }
-        console.log("res", res)
+        // console.log("res", res)
     }
 }
 
